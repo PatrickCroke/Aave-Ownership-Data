@@ -2,13 +2,13 @@ specVersion: 0.0.2
 description: AAVE Holder Subgraph
 repository: https://github.com/PatrickCroke/Aave-Ownership-Data
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: AAVE
     network: mainnet
     source:
-      address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9'
+      address: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
       abi: ERC20
       startBlock: 10926829
     mapping:
@@ -20,8 +20,8 @@ dataSources:
         - Holder
       abis:
         - name: ERC20
-          file: ./abis/ERC20.json
+          file: AAVE/abis/ERC20.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-      file: ./src/mapping.ts
+      file: AAVE/AAVE.wasm

@@ -2,7 +2,8 @@
   "name": "aave-ownership-data",
   "version": "0.1.0",
   "scripts": {
-    "build-contract": "solc contracts/Gravity.sol --abi -o abis --overwrite && solc contracts/Gravity.sol --bin -o bin --overwrite",
+    "start": "node server.js",
+    "build-contract": "solcjs contracts/AAVE.sol --abi -o abis --overwrite && solc contracts/AAVE.sol --bin -o bin --overwrite",
     "create": "graph create patrickcroke/aave-ownership-data --node https://api.thegraph.com/deploy/",
     "create-local": "graph create patrickcroke/aave-ownership-data --node http://127.0.0.1:8020",
     "codegen": "graph codegen",
@@ -17,6 +18,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0",
+    "solc": "^0.8.4",
     "truffle": "^5.0.4",
     "truffle-contract": "^4.0.5",
     "truffle-hdwallet-provider": "^1.0.4"

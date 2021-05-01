@@ -1,22 +1,39 @@
-import { NewGravatar, UpdatedGravatar } from '../generated/Gravity/Gravity'
-import { Gravatar } from '../generated/schema'
+import { BigInt, Address, store, log } from '@graphprotocol/graph-ts';
+import { Transfer, ERC20 } from '../generated/AAVE/ERC20';
+import { Token, Holder } from '../generated/schema';
 
-export function handleNewGravatar(event: NewGravatar): void {
-  let gravatar = new Gravatar(event.params.id.toHex())
-  gravatar.owner = event.params.owner
-  gravatar.displayName = event.params.displayName
-  gravatar.imageUrl = event.params.imageUrl
-  gravatar.save()
+function updateBalance(tokenAddress: Address, holderAddress: Address, value: BigInt, increase: boolean): void {
+  if (holderAddress.toHexString() == '0x0000000000000000000000000000000000000000') return;
+  let id = tokenAddress.toHex() + '-' + holderAddress.toHex();
+  let holder = Holder.load(id);
+  if (holder == null) {
+    holder = new Holder(id);
+    holder.address = holderAddress;
+    holder.balance = BigInt.fromI32(0);
+    holder.token = tokenAddress.toHex();
+  }
+  holder.balance = increase ? holder.balance.plus(value) : holder.balance.minus(value);
+  if (holder.balance.isZero()) {
+    store.remove('Holder', id);
+  } else {
+    holder.save();
+  }
 }
 
-export function handleUpdatedGravatar(event: UpdatedGravatar): void {
-  let id = event.params.id.toHex()
-  let gravatar = Gravatar.load(id)
-  if (gravatar == null) {
-    gravatar = new Gravatar(id)
+function updateTotalSupply(address: Address): void {
+  let contract = ERC20.bind(address);
+  let token = Token.load(address.toHex());
+  if (token == null) {
+    token = new Token(address.toHex());
+    token.address = address;
+    token.totalSupply = BigInt.fromI32(0);
   }
-  gravatar.owner = event.params.owner
-  gravatar.displayName = event.params.displayName
-  gravatar.imageUrl = event.params.imageUrl
-  gravatar.save()
+  token.totalSupply = contract.totalSupply();
+  token.save();
+}
+
+export function handleTransfer(event: Transfer): void {
+  updateTotalSupply(event.address);
+  updateBalance(event.address, event.params.from, event.params.value, false);
+  updateBalance(event.address, event.params.to, event.params.value, true);
 }
