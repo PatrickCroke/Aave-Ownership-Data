@@ -3,10 +3,14 @@ type Holder @entity {
   address: Bytes!
   balance: BigInt!
   token: Token!
+  blockNumber: BigInt!
+  timestamp: BigInt!
 }
 
 type Token @entity {
   id: ID!
   address: Bytes!
-  totalSupply: BigInt!
+  decimals: Int
+  totalSupply: BigInt
+  name: String
 }
