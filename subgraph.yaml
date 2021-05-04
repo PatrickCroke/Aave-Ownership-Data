@@ -21,7 +21,10 @@ dataSources:
       abis:
         - name: ERC20
           file: ./abis/ERC20.json
+        - name: ERC20NameBytes32
+          file: ./abis/ERC20NameBytes32.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/mapping.ts
+
